@@ -16,6 +16,7 @@ public class MainInterfaz extends JFrame {
     private SistemaEnergetico sistema;
     private CatalogoDispositivos catalogo;
     private Usuario usuarioActual;
+    private Image logoInicio;
     private JPanel panelInicio;
     private JTabbedPane pestanas;
     private static final Color COLOR_PRIMARIO = new Color(6, 125, 233);
@@ -39,8 +40,35 @@ public class MainInterfaz extends JFrame {
         setSize(1060, 800);
         setLocationRelativeTo(null);
         setBackground(COLOR_FONDO);
+        logoInicio = cargarLogoInicio();
         mostrarPantallaLogin();
         setVisible(true);
+    }
+    private Image cargarLogoInicio() {
+        String[] rutas = {
+                "/SistemaConsumoElectrico/Recursos/logo_inicio.jpeg",
+                "/SistemaConsumoElectrico/Recursos/logo_inicio.jpg",
+                "/SistemaConsumoElectrico/recursos/logo_inicio.jpeg",
+                "/SistemaConsumoElectrico/recursos/logo_inicio.jpg"
+        };
+        for (String ruta : rutas) {
+            java.net.URL recurso = MainInterfaz.class.getResource(ruta);
+            if (recurso != null) {
+                return new ImageIcon(recurso).getImage();
+            }
+        }
+        String base = System.getProperty("user.dir");
+        String[] rutasArchivo = {
+                base + "\\src\\SistemaConsumoElectrico\\Recursos\\logo_inicio.jpeg",
+                base + "\\src\\SistemaConsumoElectrico\\Recursos\\logo_inicio.jpg"
+        };
+        for (String ruta : rutasArchivo) {
+            ImageIcon icono = new ImageIcon(ruta);
+            if (icono.getIconWidth() > 0) {
+                return icono.getImage();
+            }
+        }
+        return null;
     }
     private void mostrarPantallaLogin() {
         JPanel panelPrincipal = new JPanel(new BorderLayout());
@@ -1191,11 +1219,15 @@ public class MainInterfaz extends JFrame {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-                // Cambia el nombre si tu archivo no se llama logo_inicio.jpg
-                ImageIcon icono = new ImageIcon("SistemaConsumoElectrico\\recursos\\logo_inicio.jpg");
-                Image img = icono.getImage();
-
-                g2.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+                if (logoInicio != null) {
+                    g2.drawImage(logoInicio, 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    g2.setColor(new Color(230, 230, 230));
+                    g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                    g2.setColor(new Color(90, 90, 90));
+                    g2.setFont(new Font("Segoe UI", Font.BOLD, 16));
+                    g2.drawString("Logo no encontrado", 65, getHeight() / 2);
+                }
 
                 // Capa ligera para estilo profesional
                 g2.setColor(new Color(10, 25, 47, 45));
